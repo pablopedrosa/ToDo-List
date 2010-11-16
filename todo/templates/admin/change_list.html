@@ -1,11 +1,12 @@
-{% extends "admin/base_site.html" %}
-{% load adminmedia admin_list i18n %}
+{% extends "main.html" %}
+{% load adminmedia admin_list i18n staticmedia %}
+
 
 {% block extrastyle %}
   {{ block.super }}
-  <link rel="stylesheet" type="text/css" href="{% admin_media_prefix %}css/changelists.css" />
+  <link rel="stylesheet" type="text/css" href="{% mediaurl 'css/changelist.css' %}" />
   {% if cl.formset %}
-    <link rel="stylesheet" type="text/css" href="{% admin_media_prefix %}css/forms.css" />
+    <link rel="stylesheet" type="text/css" href="{% mediaurl 'css/forms.css' %}" />
   {% endif %}
   {% if cl.formset or action_form %}
     {% url admin:jsi18n as jsi18nurl %}
@@ -25,11 +26,110 @@
 {% if action_form %}{% if actions_on_top or actions_on_bottom %}
 <script type="text/javascript">
 (function($) {
-    $(document).ready(function($) {
-        $("tr input.action-select").actions();
-    });
+	$(document).ready(function($) {
+		$("tr input.action-select").actions();
+
+	{% for obj in cl.result_list %}
+	// hover
+	$('#progress_btns_{{ obj.pk }} li').hover(function() {
+	$progress = $(this).text();
+	$('#progress_on_{{ obj.pk }}').css('width', barWidth($progress));
+	});
+
+	// mouseout
+	$('#progress_btns_{{ obj.pk }} li').mouseout(function() {
+	$progress = $('#progress_{{ obj.pk }}').text();
+	$('#progress_on_{{ obj.pk }}').css('width', barWidth($progress));
+	});
+
+	//click
+	$('#progress_btns_{{ obj.pk }} li').click(function() {
+	$progress = $(this).text();
+	$('#progress_on_{{ obj.pk }}').css('width', barWidth($progress));
+	$('#progress_{{ obj.pk }}').text($progress);
+	$.ajax({
+	type: "POST",
+	url: "/progress/{{ obj.pk }}/",
+	data: ({progress: $progress}),
+	})
+	});
+
+	$('#progress_on_{{ obj.pk }}').css('width', barWidth({{ obj.progress }}));
+	$('#progress_{{ obj.pk }}').text({{ obj.progress }});
+
+	// Done toggle
+	$('#done_{{ obj.pk }}').click(function() {
+	if ($(this).html().indexOf("icon-yes") != -1) { $action = "no"; }
+	else { $action = "yes"; }
+
+	$.ajax({
+	type: "POST",
+	url: "/onhold_done/done/" + $action + "/{{ obj.pk }}/",
+	success: function(action) {
+	$('#done_{{ obj.pk }}').html("<img class='btn' src='/media/img/admin/icon-"
+	+$action+".gif' />");
+	},
+	error: function(action) {
+	alert("error no se pudo cambiar de estado");
+	}
+	})
+	});
+	$('#onhold_{{ obj.pk }}').click(function() {
+	if ($(this).html().indexOf("icon-yes") != -1) { $action = "no"; }
+	else { $action = "yes"; }
+
+	$.ajax({
+	type: "POST",
+	url: "/onhold_done/onhold/" + $action + "/{{ obj.pk }}/",
+	success: function(action) {
+	$('#onhold_{{ obj.pk }}').html("<img class='btn' src='/media/img/admin/icon-"
+	+$action+".gif' />");
+	},
+	error: function(action) {
+	alert("error no se pudo cambiar de estado");
+	}
+	})
+});
+{% endfor %}
+
+function barWidth($progress) {
+$progress = parseFloat($progress);
+switch ($progress){
+case 10: $width = "14px"; break;
+case 20: $width = "28px"; break;
+case 30: $width = "42px"; break;
+case 40: $width = "56px"; break;
+case 50: $width = "70px"; break;
+case 60: $width = "84px"; break;
+case 70: $width = "98px"; break;
+case 80: $width = "112px"; break;
+case 90: $width = "126px"; break;
+case 100: $width = "140px"; break;
+default: $width = "84px";
+}
+return $width;
+}
+	});
 })(django.jQuery);
 </script>
+</script>
+<style type="text/css">
+    .btn { cursor: pointer; }
+    .progress_cont { background: #ccc; border: 1px solid #ccc; width: 140px;
+      height: 10px; text-align: left; margin-left: 2px; margin-top: 0px; }
+
+    .progress_on { background: #82B8FF; width: 0px; height: 10px; position: relative;
+         z-index: 50; top: -10px; }
+
+    .progress { font-size: 11px; font-family: Arial, Helvetica, sans-serif;
+         color: #333; padding-left: 3px; width: 22px; float: left; margin-top: -2px; }
+
+    .progress_btns { position: relative; z-index: 100; width: 140px; height: 10px;}
+    .progress_btns ul, #progress_btns li { padding: 0; margin: 0; }
+    .progress_btns li { float: left; width: 14px; height: 10px; display: block;
+         font-size: 1px; cursor: pointer; color: #1E1D1C;
+    }
+</style>
 {% endif %}{% endif %}
 {% endblock %}
 
@@ -42,9 +142,7 @@
         {% trans "Home" %}
       </a>
        &rsaquo; 
-       <a href="../">
          {{ app_label|capfirst }}
-      </a>
       &rsaquo; 
       {{ cl.opts.verbose_name_plural|capfirst }}
     </div>
@@ -53,15 +151,17 @@
 
 {% block coltype %}flex{% endblock %}
 
-{% block content %}
+{% block main %}
   <div id="content-main">
     {% block object-tools %}
       {% if has_add_permission %}
-		<ul class="object-tools" style='text-align:left;'>
-		  <li>
-			<a href="{% url admin:todo_datetime_add %}" class="addlink">Add Todo items</a>
-		  </li>
-		</ul>
+        <ul class="object-tools" style='text-align:left;'>
+          <li>
+            <a href="add/{% if is_popup %}?_popup=1{% endif %}" class="addlink">
+              {% blocktrans with cl.opts.verbose_name as name %}Add {{ name }}{% endblocktrans %}
+            </a>
+          </li>
+        </ul>
       {% endif %}
     {% endblock %}
     {% if cl.formset.errors %}

@@ -1,0 +1,15 @@
+{% extends "index.html" %}
+{% load i18n %}
+{% load staticmedia %}
+
+{% block content %}
+	<div id='menu-principal'>
+	{% block menu-principal %}
+		{% include 'elements/menu.html' %}
+	{% endblock %}
+	</div>
+	<div id='main'>
+	{% block main %}
+	{% endblock %}
+	</div>
+{% endblock %}

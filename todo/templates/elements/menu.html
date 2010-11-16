@@ -1,0 +1,28 @@
+{% load i18n %}
+{% load staticmedia %}
+
+<ul id='menu'>
+	<li>
+		<div class='bold'>Main Menu</div>
+	</li>
+	<li>
+		<a href="/">Home</a>
+	</li>
+	<li>
+		<a href="/item/index" >Items</a>
+	</li>
+	<li>
+		<a href="/graph/index">Graphs</a>
+	</li>
+	{% if user.is_superuser %}
+	<li>
+		<div class='bold'>Admin</div>
+	</li>
+	<li>
+		<a href="{% url admin:auth_group_changelist %}">Grupos</a>
+	</li>
+	<li>
+		<a href="{% url admin:auth_user_changelist %}">Usuarios</a>
+	</li>
+	{% endif %}
+</ul>

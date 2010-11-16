@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="{{ LANGUAGE_CODE }}" xml:lang="{{ LANGUAGE_CODE }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
 <head>
 <title>{% block title %}Simple ToDo List{% endblock %}</title>
-<link rel="stylesheet" type="text/css" href="{% load staticmedia %}{% mediaurl 'css/base.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% load staticmedia %}{% mediaurl 'css/estilos.css' %}" />
 <!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="{% load staticmedia %}{% mediaurl 'css/ie6.css' %}" /><![endif]-->
 {% include "layouts/javascript.html" %}
 {% block extrastyle %}{% endblock %}
@@ -46,18 +46,17 @@
                     <a class="a-header" href="{{ root_path }}password_change/">
                 {% endif %}
                 {% trans 'Change password' %}</a> /
-                {% url admin:logout as logout_url %}
                 {% if logout_url %}
-                    <a href="{{ logout_url }}">
+                    <a class="a-header" href="{{ LOGOUT_URL }}">
                 {% else %}
-                    <a href="{{ root_path }}logout/">
+                    <a class="a-header" href="{{ LOGOUT_URL }}/logout">
                 {% endif %}
                 {% trans 'Log out' %}</a>
             {% endblock %}
         </div>
         {% else %}
-       	<div id="user-tools">
-			<form action="{{ app_url }}" method="post" id="login">{% csrf_token %}
+        <div id="user-tools">
+			<form action="{{ app_path }}/login/" method="post" id="login">{% csrf_token %}
 				<label for="id_username">{% trans 'Username:' %}</label> 
 			    <input type="text" name="username" id="id_username" />
 			    <label for="id_password">{% trans 'Password:' %}</label> 

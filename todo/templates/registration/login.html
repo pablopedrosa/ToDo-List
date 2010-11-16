@@ -1,0 +1,71 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+{% load staticmedia %}
+
+{% block bodyclass %}login{% endblock %}
+
+{% block title %} Simple ToDo List {% endblock %}
+
+{% block content_title %}Simple ToDo List{% endblock %}
+
+{% block breadcrumbs %}{% endblock %}
+
+{% block content %}
+{% if error_message %}
+<p class="errornote">{{ error_message }}</p>
+{% endif %}
+<!-- <div id="content-main">
+<form action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
+  <div class="form-row">
+    <label for="id_username">{% trans 'Username:' %}</label> <input type="text" name="username" id="id_username" />
+  </div>
+  <div class="form-row">
+    <label for="id_password">{% trans 'Password:' %}</label> <input type="password" name="password" id="id_password" />
+    <input type="hidden" name="this_is_the_login_form" value="1" />
+  </div>
+  <div class="submit-row">
+    <label>&nbsp;</label><input type="submit" value="{% trans 'Log in' %}" />
+  </div>
+</form>
+ -->
+{% if authenticated %}
+	<div id="main">
+	</div>
+{% else %}
+	<div class='trans' id="box_home_left">
+		<div id='left'>
+			<img border=0 src="{% mediaurl 'images/todo-list.png' %}" />
+		</div>
+	</div>
+	<div class='box_home' id="box_home_right">
+		<div id='left' align="center">
+			<div class='prominent_box'>Don´t have an account? Sign up</div>
+			<br />
+			<form class='login-form' action="{{ app_path }}/signup" method="POST" id="sign-up-form">{% csrf_token %}
+				<p>
+					<label for="id_username">Username:</label> 
+					<input id="id_username" class="required" name="username" maxlength="30" type="text">
+				</p>
+				<p>
+					<label for="id_email">Email address:</label> 
+					<input id="id_email" class="required" name="email" maxlength="75" type="text">
+				</p>
+				<p>
+					<label for="id_password1">Password:</label> 
+					<input id="id_password1" class="required" name="password1" type="password">
+				</p>
+				<p>
+					<label for="id_password2">Password (again):</label> <input id="id_password2" class="required" name="password2" type="password">
+				</p>
+				<div align='right' style='margin-right:30px;'>
+					<input align="right" type="submit" value="Sign Up" />
+				</div>
+			</form>
+		</div>
+	</div>
+{% endif %}
+<script type="text/javascript">
+document.getElementById('id_username').focus()
+</script>
+</div>
+{% endblock %}

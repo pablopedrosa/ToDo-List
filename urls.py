@@ -1,9 +1,10 @@
 from django.conf.urls.defaults import *
+from django.views.generic.simple import direct_to_template
 from django.contrib import admin
 
-# Uncomment the next two lines to enable the admin:
-# from django.contrib import admin
-# admin.autodiscover()
+import staticmedia
+
+admin.autodiscover()
 
 urlpatterns = patterns('',
     # Example:
@@ -18,4 +19,12 @@ urlpatterns = patterns('',
     (r'^admin/', include(admin.site.urls)),
     (r"^onhold_done/(onhold|done)/(yes|no)/(\d*)/$", "todo.views.onhold_done"),
     (r"^progress/(\d*)/$", "todo.views.progress"),
-)
+    (r"^logout/", "todo.views.mylogout"),
+    (r'^signup', "todo.views.signup"),
+    (r'^accounts/login/$', 'django.contrib.auth.views.login'),
+    #(r'^$', direct_to_template, { 'template': 'index.html' }, 'index'),
+    (r'^item/index/$', 'todo.views.itemindex'),
+    (r'^graph/index/$', 'todo.views.barchart'),
+    (r'^login/', 'todo.views.index'),
+    (r'^$', 'todo.views.index'),
+) + staticmedia.serve()

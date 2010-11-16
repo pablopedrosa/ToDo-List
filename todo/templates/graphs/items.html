@@ -1,0 +1,18 @@
+{% extends "main.html" %}
+{% load adminmedia admin_list i18n staticmedia %}
+
+{% if not is_popup %}
+  {% block breadcrumbs %}
+    <div class="breadcrumbs">
+      <a href="../../">
+        {% trans "Home" %}
+      </a>
+      &rsaquo; 
+      Todo
+      &rsaquo; 
+      <a href="./">
+      	Graphs
+      </a>
+    </div>
+  {% endblock %}
+{% endif %}

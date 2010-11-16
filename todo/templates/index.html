@@ -1,0 +1,28 @@
+{% extends "layouts/base.html" %}
+{% load i18n %}
+{% load staticmedia %}
+
+{% block content %}
+	{% if authenticated %}
+		<div id="main">
+		</div>
+	{% else %}
+		<div class='trans' id="box_home_left">
+			<div id='left'>
+				<img border=0 src="{% mediaurl 'images/todo-list.png' %}" />
+			</div>
+		</div>
+		<div class='box_home' id="box_home_right">
+			<div id='left' align="center">
+				<div class='prominent_box'>Don´t have an account? Sign up</div>
+				<br />
+				<form class='login-form' action="{{ app_path }}/signup" method="POST" id="sign-up-form">{% csrf_token %}
+					{{ form.as_p }}
+					<div align='right' style='margin-right:30px;'>
+						<input align="right" type="submit" value="Sign Up" />
+					</div>
+				</form>
+			</div>
+		</div>
+	{% endif %}
+{% endblock %}
